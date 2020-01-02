@@ -6,8 +6,8 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-public class Item implements Serializable {
+@Entity(name = "ITEM")
+public class    Item implements Serializable {
 
     @Id
     @GeneratedValue

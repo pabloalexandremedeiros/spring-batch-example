@@ -18,7 +18,7 @@ public class SalesmanFieldSetMapper implements FieldSetMapper<Line> {
 
         return new Salesman(
                 fileName,
-                fieldSet.readString(SalesmanFieldName.CPF.name()),
+                fieldSet.readLong(SalesmanFieldName.CPF.name()),
                 fieldSet.readString(SalesmanFieldName.NAME.name()),
                 fieldSet.readDouble(SalesmanFieldName.SALARY.name())
         );

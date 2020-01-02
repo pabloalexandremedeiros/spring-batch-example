@@ -1,19 +1,22 @@
 package br.com.company.analisedadosdevenda.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
+@Entity(name = "SALESMAN")
 public class Salesman extends Line implements Serializable {
 
     @Id
-    private String cpf;
+    @GeneratedValue
+    private Long id;
+    private Long cpf;
     private String name;
     private Double salary;
 
-    public Salesman(String fileId, String cpf, String name, Double salary){
+    public Salesman(String fileId, Long cpf, String name, Double salary){
 
         super(fileId, Salesman.class);
 
@@ -24,7 +27,8 @@ public class Salesman extends Line implements Serializable {
 
     private Salesman(){ super("", Salesman.class); }
 
-    public String getCpf() { return cpf; }
+    public Long getId() { return id; }
+    public Long getCpf() { return cpf; }
     public String getName() { return name; }
     public Double getSalary() { return salary; }
 

@@ -2,5 +2,5 @@ package br.com.company.analisedadosdevenda.batch.step.importdatasale.readers.sal
 
 public enum SaleFieldName {
 
-    ID, NOME_VENDEDOR, ITENS;
+    ID, SALEMAN_NAME, ITENS;
 }

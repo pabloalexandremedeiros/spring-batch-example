@@ -6,6 +6,8 @@ import br.com.company.analisedadosdevenda.model.Sale;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -23,13 +25,31 @@ public class SaleFieldSetMapper implements FieldSetMapper<Line> {
     public Sale mapFieldSet(FieldSet fieldSet) {
 
         Collection<Item> items = createItemsFromFieldset(fieldSet);
+        Double totalValue = calculateTotalSaleValue(items);
 
         return new Sale(
                 fileName,
                 fieldSet.readLong(SaleFieldName.ID.name()),
-                fieldSet.readString(SaleFieldName.NOME_VENDEDOR.name()),
+                fieldSet.readString(SaleFieldName.SALEMAN_NAME.name()),
+                totalValue,
                 items
         );
+    }
+
+    private static Double calculateTotalSaleValue(Collection<Item> items){
+
+        return items
+                .stream()
+                .map(item ->
+
+                    BigDecimal
+                            .valueOf(item.getPrice())
+                            .multiply(BigDecimal.valueOf(item.getQuantity()))
+                            .setScale(2, RoundingMode.HALF_DOWN)
+
+                )
+                .mapToDouble(BigDecimal::doubleValue)
+                .sum();
     }
 
     private static Collection<Item> createItemsFromFieldset(FieldSet fieldSet) {

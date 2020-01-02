@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 @ExtendWith(SpringExtension.class)
 public class VendaTokenizerTest {
 
-    private static final String[] NOMES_CAMPOS = { SaleFieldName.ID.name(), SaleFieldName.ITENS.name(), SaleFieldName.NOME_VENDEDOR.name() };
+    private static final String[] NOMES_CAMPOS = { SaleFieldName.ID.name(), SaleFieldName.ITENS.name(), SaleFieldName.SALEMAN_NAME.name() };
 
     @Test
     public void criar_fieldset_com_todos_campos(){

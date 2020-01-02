@@ -1,22 +1,36 @@
 package br.com.company.analisedadosdevenda.model;
 
+import java.util.Collection;
 import java.util.Objects;
 
 public class SalesReport {
 
     private String fileName;
-    private Long clientAmout;
-    private Long salesmanAmout;
-    private Long mostExpensiveSaleId;
-    private String worstSalesman;
+    private Long numberOfFileClients;
+    private Long numberOfFileSalesman;
+    private Collection<Long> mostExpensiveSalesIds;
+    private Salesman worstSalesman;
 
-    public SalesReport(){}
+    public SalesReport(
+            String fileName,
+            Long numberOfFileClients,
+            Long numberOfFileSalesman,
+            Collection<Long> mostExpensiveSalesIds,
+            Salesman worstSalesman){
+
+        this.fileName = fileName;
+        this.numberOfFileClients = numberOfFileClients;
+        this.numberOfFileSalesman = numberOfFileSalesman;
+        this.mostExpensiveSalesIds = mostExpensiveSalesIds;
+        this.worstSalesman = worstSalesman;
+    }
+
 
     public String getFileName() { return fileName; }
-    public Long getClientAmout() { return clientAmout; }
-    public Long getSalesmanAmout() { return salesmanAmout; }
-    public Long getMostExpensiveSaleId() { return mostExpensiveSaleId; }
-    public String getWorstSalesman() { return worstSalesman; }
+    public Long getNumberOfFileClients() { return numberOfFileClients; }
+    public Long getNumberOfFileSalesman() { return numberOfFileSalesman; }
+    public Collection<Long> getMostExpensiveSalesIds() { return mostExpensiveSalesIds; }
+    public Salesman getWorstSalesman() { return worstSalesman; }
 
     @Override
     public boolean equals(Object o) {
@@ -24,24 +38,24 @@ public class SalesReport {
         if (o == null || getClass() != o.getClass()) return false;
         SalesReport that = (SalesReport) o;
         return Objects.equals(fileName, that.fileName) &&
-                Objects.equals(clientAmout, that.clientAmout) &&
-                Objects.equals(salesmanAmout, that.salesmanAmout) &&
-                Objects.equals(mostExpensiveSaleId, that.mostExpensiveSaleId) &&
+                Objects.equals(numberOfFileClients, that.numberOfFileClients) &&
+                Objects.equals(numberOfFileSalesman, that.numberOfFileSalesman) &&
+                Objects.equals(mostExpensiveSalesIds, that.mostExpensiveSalesIds) &&
                 Objects.equals(worstSalesman, that.worstSalesman);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileName, clientAmout, salesmanAmout, mostExpensiveSaleId, worstSalesman);
+        return Objects.hash(fileName, numberOfFileClients, numberOfFileSalesman, mostExpensiveSalesIds, worstSalesman);
     }
 
     @Override
     public String toString() {
         return "SalesReport{" +
                 "fileName='" + fileName + '\'' +
-                ", clientAmout=" + clientAmout +
-                ", salesmanAmout=" + salesmanAmout +
-                ", mostExpensiveSaleId=" + mostExpensiveSaleId +
+                ", clientAmout=" + numberOfFileClients +
+                ", salesmanAmout=" + numberOfFileSalesman +
+                ", mostExpensiveSaleId=" + mostExpensiveSalesIds +
                 ", worstSalesman='" + worstSalesman + '\'' +
                 '}';
     }

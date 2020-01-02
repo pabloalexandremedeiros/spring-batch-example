@@ -4,23 +4,25 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 
-@Entity
+@Entity(name = "SALE")
 public class Sale extends Line implements Serializable {
 
     @Id
     private Long id;
     private String salesmanName;
+    private Double totalValue;
 
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "saleId", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private List<Item> items = new ArrayList<>();
 
-    public Sale(String fileId, Long id, String salesmanName, Collection<Item> items){
+    public Sale(String fileId, Long id, String salesmanName, Double totalValue, Collection<Item> items){
 
         super(fileId, Sale.class);
 
         this.id = id;
         this.salesmanName = salesmanName;
+        this.totalValue = totalValue;
         this.items.addAll(items);
     }
 
@@ -28,6 +30,7 @@ public class Sale extends Line implements Serializable {
 
     public Long getId() { return id; }
     public String getSalesmanName() { return salesmanName; }
+    private Double getTotalValue(){ return totalValue; }
     public Collection<Item> getItens() { return Collections.unmodifiableCollection(items); }
 
     @Override

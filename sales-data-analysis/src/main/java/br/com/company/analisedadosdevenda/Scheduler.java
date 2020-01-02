@@ -23,11 +23,10 @@ public class Scheduler {
         this.jobFactory = jobFactory;
     }
 
-    @Scheduled(fixedDelay = 1000)
+    @Scheduled(fixedRate = 10000)
     public void run() throws JobParametersInvalidException, JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException {
 
         Job job = jobFactory.importDataSale();
-
         JobParameters params = new JobParametersBuilder().addLong("jobId", System.currentTimeMillis()).toJobParameters();
         jobLauncher.run(job, params);
 

@@ -7,7 +7,7 @@ import org.springframework.batch.item.file.transform.LineTokenizer;
 public class SaleTokenizer implements LineTokenizer {
 
     private static final String FIELD_SEPARATOR = "ç";
-    private static final String[] FIELD_NAMES = { SaleFieldName.ID.name(), SaleFieldName.ITENS.name(), SaleFieldName.NOME_VENDEDOR.name() };
+    private static final String[] FIELD_NAMES = { SaleFieldName.ID.name(), SaleFieldName.ITENS.name(), SaleFieldName.SALEMAN_NAME.name() };
 
     @Override
     public FieldSet tokenize(String line) {

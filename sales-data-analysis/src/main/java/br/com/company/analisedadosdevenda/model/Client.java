@@ -1,14 +1,17 @@
 package br.com.company.analisedadosdevenda.model;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
+@Entity(name = "CLIENT")
 public class Client extends Line implements Serializable {
 
     @Id
+    @GeneratedValue
+    private Long id;
     private Long cnpj;
     private String name;
     private String businessArea;
@@ -24,6 +27,7 @@ public class Client extends Line implements Serializable {
 
     private Client(){ super("", Client.class); }
 
+    public Long getId() { return id; }
     public Long getCnpj() { return cnpj; }
     public String getName() { return name; }
     public String getBusinessArea() { return businessArea; }
