@@ -1,15 +1,17 @@
 package com.company.salesanalysis.batch.step.importdatasale;
 
 import com.company.salesanalysis.batch.ContextProvider;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.partition.support.StepExecutionAggregator;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class ImportDataSalesStepAggregator implements StepExecutionAggregator {
-
 
     @Override
     public void aggregate(StepExecution result, Collection<StepExecution> executions) {
@@ -22,6 +24,8 @@ public class ImportDataSalesStepAggregator implements StepExecutionAggregator {
 
         ContextProvider
                 .putFileNamesInJobContext(fileNames, result.getJobExecution().getExecutionContext());
+
+        result.setExitStatus(ExitStatus.COMPLETED);
     }
 
 

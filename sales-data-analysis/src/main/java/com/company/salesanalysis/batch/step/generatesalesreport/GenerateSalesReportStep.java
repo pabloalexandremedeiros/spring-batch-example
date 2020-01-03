@@ -1,34 +1,27 @@
 package com.company.salesanalysis.batch.step.generatesalesreport;
 
-import com.company.salesanalysis.application.SalesAnalysisService;
-import com.company.salesanalysis.batch.ContextProvider;
-import com.company.salesanalysis.batch.step.generatesalesreport.writer.salesreport.SalesReportFieldExtractor;
-import com.company.salesanalysis.domain.model.SalesReport;
-import com.company.salesanalysis.port.adapter.systemfile.ResourceProvider;
+import com.company.salesanalysis.batch.step.generatesalesreport.writer.salesreport.CreateSalesReportTasklet;
 import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.JobInterruptedException;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.file.FlatFileItemWriter;
-import org.springframework.batch.item.file.builder.FlatFileItemWriterBuilder;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
+import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 @Component
 public class GenerateSalesReportStep implements Step {
 
-    private String basePathOutFiles;
-    private SalesAnalysisService salesAnalysisService;
+    private TaskletStep taskletStep;
+    private StepBuilderFactory stepBuilderFactory;
+    private CreateSalesReportTasklet createSalesReportTasklet;
 
     public GenerateSalesReportStep(
-            @Value("${filesPathOut}") String basePathOutFiles,
-            SalesAnalysisService salesAnalysisService) {
+            StepBuilderFactory stepBuilderFactory,
+            CreateSalesReportTasklet createSalesReportTasklet) {
 
-        this.basePathOutFiles = basePathOutFiles;
-        this.salesAnalysisService = salesAnalysisService;
+        this.stepBuilderFactory = stepBuilderFactory;
+        this.createSalesReportTasklet = createSalesReportTasklet;
     }
 
     @Override
@@ -43,45 +36,26 @@ public class GenerateSalesReportStep implements Step {
 
     @Override
     public int getStartLimit() {
-        return 0;
+        return 1;
     }
 
     @Override
-    public void execute(StepExecution stepExecution) {
+    public void execute(StepExecution stepExecution) throws JobInterruptedException {
 
-        ContextProvider
-                .getFileNamesInJobContext(stepExecution.getJobExecution().getExecutionContext())
-                .parallelStream()
-                .map(this.salesAnalysisService::generateReportForFile)
-                .forEach(salesReport -> {
+        if(this.taskletStep == null){
 
-                    Resource fileForWrite = ResourceProvider.createFileInPath(this.basePathOutFiles, salesReport.getFileName());
-                    writeSalesReportInFile(fileForWrite, salesReport, stepExecution.getExecutionContext());
+            this.taskletStep = this
+                    .stepBuilderFactory
+                    .get("generateSalesReport")
+                    .tasklet(createSalesReportTasklet)
+                    .exceptionHandler((context, throwable) -> {throwable.printStackTrace();})
+                    .build();
+        }
 
-                });
-
+        this.taskletStep.execute(stepExecution);
         stepExecution.setExitStatus(ExitStatus.COMPLETED);
     }
 
 
-    private static void writeSalesReportInFile(Resource resource, SalesReport salesReport, ExecutionContext executionContext) {
-
-        FlatFileItemWriter<SalesReport> flatFileItemWriter = new FlatFileItemWriterBuilder<SalesReport>()
-                .name("lineWriterOutFile")
-                .resource(resource)
-                .delimited()
-                .delimiter(";")
-                .fieldExtractor(new SalesReportFieldExtractor())
-                .build();
-
-        try {
-
-            flatFileItemWriter.open(executionContext);
-            flatFileItemWriter.write(Collections.singletonList(salesReport));
-
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-    }
 
 }

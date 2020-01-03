@@ -35,7 +35,7 @@ public class JobFactory {
 
             return this
                     .jobBuilderFactory
-                    .get("importDataSaleJob")
+                    .get("salesReportJob")
                     .incrementer(new RunIdIncrementer())
                     .start(this.importDataSaleStepFactory.createImportDataSaleStep())
                     .next(this.salesReportStep)

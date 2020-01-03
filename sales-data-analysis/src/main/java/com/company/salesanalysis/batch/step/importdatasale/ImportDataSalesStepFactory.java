@@ -56,7 +56,7 @@ public class ImportDataSalesStepFactory {
                 .get("multiImportDataSale")
                 .partitioner("import", partitioner)
                 .step(new ImportDataSalesFromFileStep(this.filesPathIn, this.stepBuilderFactory, this.classifierCompositeItemWriter))
-                .aggregator(new ImportDataSalesStepAggregator())
+                .aggregator((result, executions) -> new ImportDataSalesStepAggregator().aggregate(result, executions))
                 .taskExecutor(this.threadPoolTaskExecutor)
                 .build();
     }

@@ -17,5 +17,9 @@ public class ContextProvider {
     }
 
     public static List<String> getFileNamesInJobContext(ExecutionContext executionContext){ return  (List<String>) executionContext.get("fileNames"); }
-    public static void putFileNamesInJobContext(List<String> fileNames, ExecutionContext executionContext) { executionContext.put("fileNames", fileNames); }
+
+    public static void putFileNamesInJobContext(List<String> fileNames, ExecutionContext executionContext) {
+
+        executionContext.put("fileNames", fileNames);
+    }
 }

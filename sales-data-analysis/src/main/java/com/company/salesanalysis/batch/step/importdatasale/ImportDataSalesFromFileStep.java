@@ -87,9 +87,7 @@ public class ImportDataSalesFromFileStep implements Step {
         }
     }
 
-    private static FlatFileItemReader<Line> createFlatFileItemReader(String baseFileName, Resource resource) {
-
-        String fileName = baseFileName + LocalDateTime.now();
+    private static FlatFileItemReader<Line> createFlatFileItemReader(String fileName, Resource resource) {
 
         return new FlatFileItemReaderBuilder<Line>()
                 .name(fileName)
