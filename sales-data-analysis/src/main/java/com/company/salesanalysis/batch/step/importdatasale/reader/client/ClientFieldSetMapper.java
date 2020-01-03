@@ -1,4 +1,4 @@
-package com.company.salesanalysis.batch.step.importdatasale.readers.client;
+package com.company.salesanalysis.batch.step.importdatasale.reader.client;
 
 import com.company.salesanalysis.domain.model.Client;
 import com.company.salesanalysis.domain.model.Line;

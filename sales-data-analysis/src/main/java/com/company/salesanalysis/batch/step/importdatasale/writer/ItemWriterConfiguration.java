@@ -1,4 +1,4 @@
-package com.company.salesanalysis.batch.step.importdatasale.writers;
+package com.company.salesanalysis.batch.step.importdatasale.writer;
 
 import com.company.salesanalysis.domain.model.Line;
 import org.springframework.batch.item.support.ClassifierCompositeItemWriter;

@@ -1,6 +1,6 @@
 package com.company.salesanalysis.port.adapter.translate.venda;
 
-import com.company.salesanalysis.batch.step.importdatasale.readers.sale.SaleFieldName;
+import com.company.salesanalysis.batch.step.importdatasale.reader.sale.SaleFieldName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;

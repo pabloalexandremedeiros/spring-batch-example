@@ -1,7 +1,7 @@
 package com.company.salesanalysis.port.adapter.translate.cliente;
 
-import com.company.salesanalysis.batch.step.importdatasale.readers.client.ClientTokenizer;
-import com.company.salesanalysis.batch.step.importdatasale.readers.client.ClientFieldName;
+import com.company.salesanalysis.batch.step.importdatasale.reader.client.ClientTokenizer;
+import com.company.salesanalysis.batch.step.importdatasale.reader.client.ClientFieldName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.batch.item.file.transform.FieldSet;

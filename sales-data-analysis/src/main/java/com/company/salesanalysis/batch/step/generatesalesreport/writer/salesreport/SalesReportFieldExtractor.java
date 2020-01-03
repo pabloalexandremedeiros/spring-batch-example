@@ -1,4 +1,4 @@
-package com.company.salesanalysis.batch.step.importdatasale.writers.salesreport;
+package com.company.salesanalysis.batch.step.generatesalesreport.writer.salesreport;
 
 import com.company.salesanalysis.domain.model.SalesReport;
 import org.springframework.batch.item.file.transform.FieldExtractor;

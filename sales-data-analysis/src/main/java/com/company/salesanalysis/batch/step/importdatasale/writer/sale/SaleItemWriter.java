@@ -1,4 +1,4 @@
-package com.company.salesanalysis.batch.step.importdatasale.writers.sales;
+package com.company.salesanalysis.batch.step.importdatasale.writer.sale;
 
 import com.company.salesanalysis.domain.model.Sale;
 import com.company.salesanalysis.domain.model.SaleRepository;

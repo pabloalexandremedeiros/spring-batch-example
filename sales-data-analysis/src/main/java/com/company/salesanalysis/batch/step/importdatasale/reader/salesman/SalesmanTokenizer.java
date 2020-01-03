@@ -1,4 +1,4 @@
-package com.company.salesanalysis.batch.step.importdatasale.readers.salesman;
+package com.company.salesanalysis.batch.step.importdatasale.reader.salesman;
 
 import org.springframework.batch.item.file.transform.DefaultFieldSet;
 import org.springframework.batch.item.file.transform.FieldSet;

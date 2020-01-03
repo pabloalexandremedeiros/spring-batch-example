@@ -1,8 +1,8 @@
-package com.company.salesanalysis.batch.step.importdatasale.writers;
+package com.company.salesanalysis.batch.step.importdatasale.writer;
 
-import com.company.salesanalysis.batch.step.importdatasale.writers.client.ClientItemWriter;
-import com.company.salesanalysis.batch.step.importdatasale.writers.sales.SaleItemWriter;
-import com.company.salesanalysis.batch.step.importdatasale.writers.salesman.SalesmanItemWriter;
+import com.company.salesanalysis.batch.step.importdatasale.writer.client.ClientItemWriter;
+import com.company.salesanalysis.batch.step.importdatasale.writer.sale.SaleItemWriter;
+import com.company.salesanalysis.batch.step.importdatasale.writer.salesman.SalesmanItemWriter;
 import com.company.salesanalysis.domain.model.Client;
 import com.company.salesanalysis.domain.model.Line;
 import com.company.salesanalysis.domain.model.Sale;

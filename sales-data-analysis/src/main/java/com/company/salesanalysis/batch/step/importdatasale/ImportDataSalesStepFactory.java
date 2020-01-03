@@ -8,33 +8,33 @@ import org.springframework.batch.core.partition.support.MultiResourcePartitioner
 import org.springframework.batch.core.partition.support.Partitioner;
 import org.springframework.batch.item.support.ClassifierCompositeItemWriter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
-import static com.company.salesanalysis.port.adapter.systemfile.ResourceProvider.*;
+import java.util.Collection;
+
+import static com.company.salesanalysis.port.adapter.systemfile.ResourceProvider.getFilesInPath;
 
 @Component
 @EnableBatchProcessing
-public class ImportDataSaleStepFactory {
+public class ImportDataSalesStepFactory {
 
 
-    private String filesPath;
+    private String filesPathIn;
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
     private StepBuilderFactory stepBuilderFactory;
-    private SalesReportGenerator salesReportGenerator;
     private ClassifierCompositeItemWriter<Line> classifierCompositeItemWriter;
 
-    public ImportDataSaleStepFactory(
-            @Value("${filesPath}") String filesPath,
+    public ImportDataSalesStepFactory(
+            @Value("${filesPathIn}") String filesPath,
+            ThreadPoolTaskExecutor threadPoolTaskExecutor,
             StepBuilderFactory stepBuilderFactory,
-            SalesReportGenerator salesReportGenerator,
             ClassifierCompositeItemWriter<Line> classifierCompositeItemWriter) {
 
-        this.filesPath = filesPath;
+        this.filesPathIn = filesPath;
+        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
         this.stepBuilderFactory = stepBuilderFactory;
-        this.salesReportGenerator = salesReportGenerator;
         this.classifierCompositeItemWriter = classifierCompositeItemWriter;
     }
 
@@ -46,28 +46,18 @@ public class ImportDataSaleStepFactory {
         return multiResourcePartitioner;
     }
 
+    public Step createImportDataSaleStep() {
 
-    @Bean
-    public ThreadPoolTaskExecutor taskExecutor() {
-        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setMaxPoolSize(10);
-        taskExecutor.setCorePoolSize(10);
-        taskExecutor.setQueueCapacity(10);
-        taskExecutor.afterPropertiesSet();
-        return taskExecutor;
-    }
-
-    public Step importDataSale() {
-
-        Collection<Resource> resources = getFilesInPath(this.filesPath);
+        Collection<Resource> resources = getFilesInPath(this.filesPathIn);
         Partitioner partitioner = partitioner(resources.toArray(Resource[]::new));
 
         return this
                 .stepBuilderFactory
                 .get("multiImportDataSale")
-                .partitioner("im", partitioner)
-                .step(new ImportDataSaleFromFile(stepBuilderFactory, salesReportGenerator, classifierCompositeItemWriter))
-                .taskExecutor(taskExecutor())
+                .partitioner("import", partitioner)
+                .step(new ImportDataSalesFromFileStep(this.filesPathIn, this.stepBuilderFactory, this.classifierCompositeItemWriter))
+                .aggregator(new ImportDataSalesStepAggregator())
+                .taskExecutor(this.threadPoolTaskExecutor)
                 .build();
     }
 

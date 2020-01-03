@@ -1,7 +1,7 @@
 package com.company.salesanalysis.port.adapter.translate.vendedor;
 
 
-import com.company.salesanalysis.batch.step.importdatasale.readers.salesman.SalesmanFieldName;
+import com.company.salesanalysis.batch.step.importdatasale.reader.salesman.SalesmanFieldName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;

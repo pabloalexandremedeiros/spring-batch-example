@@ -5,7 +5,6 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -14,7 +13,30 @@ import java.util.stream.Collectors;
 
 public class ResourceProvider {
 
-    private ResourceProvider(){}
+    private static final ExtensionFile DEFAULT_EXTENSION_FILE = ExtensionFile.TXT;
+    private static final String BAR = "/";
+
+    public enum ExtensionFile {
+
+        TXT(".txt");
+
+        private String des;
+
+        ExtensionFile(String des) {
+            this.des = des;
+        }
+
+        public String getDesc() {
+            return des;
+        }
+
+    }
+
+    private ResourceProvider() {}
+
+    public static Resource getFileInPath(String path, String fileName) {
+        return new FileSystemResource(path + fileName + DEFAULT_EXTENSION_FILE.getDesc());
+    }
 
     public static Collection<Resource> getFilesInPath(String path) {
 
@@ -33,27 +55,17 @@ public class ResourceProvider {
 
     public static Resource createFileInPath(String basePathOutFile, String originFileName) {
 
-    String[] fragments = originFileName.split("/");
-    Integer length = fragments.length;
-    String lastFragment = fragments[length - 1];
-
-    File file = new File(basePathOutFile + lastFragment.substring(0, lastFragment.length() - 4) + LocalDateTime.now() + ".txt");
+        File file = new File(basePathOutFile + originFileName + DEFAULT_EXTENSION_FILE.getDesc());
 
         try {
 
             file.createNewFile();
 
-        } catch (IOException ex){
-            throw new RuntimeException(ex.getMessage());
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
         }
 
         return new FileSystemResource(file);
     }
 
-
-    public static boolean hasResource(String path){
-
-        String[] filesPath = new File(path).list();
-        return (filesPath == null || filesPath.length < 0);
-    }
 }

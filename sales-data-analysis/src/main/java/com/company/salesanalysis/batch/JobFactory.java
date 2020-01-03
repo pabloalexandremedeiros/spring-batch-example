@@ -1,6 +1,7 @@
 package com.company.salesanalysis.batch;
 
-import com.company.salesanalysis.batch.step.importdatasale.ImportDataSaleStepFactory;
+import com.company.salesanalysis.batch.step.importdatasale.ImportDataSalesStepFactory;
+import com.company.salesanalysis.batch.step.generatesalesreport.GenerateSalesReportStep;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -16,14 +17,17 @@ import org.springframework.stereotype.Component;
 public class JobFactory {
 
     private JobBuilderFactory jobBuilderFactory;
-    private ImportDataSaleStepFactory importDataSaleStepFactory;
+    private ImportDataSalesStepFactory importDataSaleStepFactory;
+    private GenerateSalesReportStep salesReportStep;
 
     public JobFactory(
             JobRepository jobRepository,
-            ImportDataSaleStepFactory importDataSaleStepFactory) {
+            ImportDataSalesStepFactory importDataSaleStepFactory,
+            GenerateSalesReportStep salesReportStep) {
 
         this.jobBuilderFactory = new JobBuilderFactory(jobRepository);
         this.importDataSaleStepFactory = importDataSaleStepFactory;
+        this.salesReportStep = salesReportStep;
     }
 
     @Bean
@@ -33,28 +37,8 @@ public class JobFactory {
                     .jobBuilderFactory
                     .get("importDataSaleJob")
                     .incrementer(new RunIdIncrementer())
-                    .flow(this.importDataSaleStepFactory.importDataSale())
-                    .end()
+                    .start(this.importDataSaleStepFactory.createImportDataSaleStep())
+                    .next(this.salesReportStep)
                     .build();
-
     }
-
-    @Bean
-    private JobRepository createJobRepository()  {
-
-        MapJobRepositoryFactoryBean factory = new MapJobRepositoryFactoryBean();
-        factory.setTransactionManager(new ResourcelessTransactionManager());
-        JobRepository jobRepository = null;
-
-        try {
-            jobRepository = factory.getObject();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return jobRepository;
-    }
-
-
 }

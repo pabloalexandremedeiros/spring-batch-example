@@ -1,12 +1,14 @@
 package com.company.salesanalysis.batch.step.importdatasale;
 
-import com.company.salesanalysis.batch.step.importdatasale.readers.client.ClientFieldSetMapper;
-import com.company.salesanalysis.batch.step.importdatasale.readers.client.ClientTokenizer;
-import com.company.salesanalysis.batch.step.importdatasale.readers.sale.SaleFieldSetMapper;
-import com.company.salesanalysis.batch.step.importdatasale.readers.sale.SaleTokenizer;
-import com.company.salesanalysis.batch.step.importdatasale.readers.salesman.SalesmanFieldSetMapper;
-import com.company.salesanalysis.batch.step.importdatasale.readers.salesman.SalesmanTokenizer;
+import com.company.salesanalysis.batch.ContextProvider;
+import com.company.salesanalysis.batch.step.importdatasale.reader.client.ClientFieldSetMapper;
+import com.company.salesanalysis.batch.step.importdatasale.reader.client.ClientTokenizer;
+import com.company.salesanalysis.batch.step.importdatasale.reader.sale.SaleFieldSetMapper;
+import com.company.salesanalysis.batch.step.importdatasale.reader.sale.SaleTokenizer;
+import com.company.salesanalysis.batch.step.importdatasale.reader.salesman.SalesmanFieldSetMapper;
+import com.company.salesanalysis.batch.step.importdatasale.reader.salesman.SalesmanTokenizer;
 import com.company.salesanalysis.domain.model.Line;
+import com.company.salesanalysis.port.adapter.systemfile.ResourceProvider;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
@@ -16,27 +18,28 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.support.ClassifierCompositeItemWriter;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImportDataSaleFromFile implements Step {
+public class ImportDataSalesFromFileStep implements Step {
 
+    private String folderInPath;
     private TaskletStep taskletStep;
     private StepBuilderFactory stepBuilderFactory;
-    private SalesReportGenerator salesReportGenerator;
     private ClassifierCompositeItemWriter<Line> classifierCompositeItemWriter;
 
-    public ImportDataSaleFromFile(
+    public ImportDataSalesFromFileStep(
+            @Value("${filesPathIn}") String folderInPath,
             StepBuilderFactory stepBuilderFactory,
-            SalesReportGenerator salesReportGenerator,
             ClassifierCompositeItemWriter<Line> classifierCompositeItemWriter) {
 
+        this.folderInPath = folderInPath;
         this.classifierCompositeItemWriter = classifierCompositeItemWriter;
-        this.salesReportGenerator = salesReportGenerator;
         this.stepBuilderFactory = stepBuilderFactory;
 
     }
@@ -59,27 +62,7 @@ public class ImportDataSaleFromFile implements Step {
     @Override
     public void execute(StepExecution stepExecution) throws JobInterruptedException {
 
-        if (this.taskletStep == null) {
-
-            String fileName = ((String) stepExecution.getExecutionContext().get("fileName")).substring(6);
-            Resource resource = new FileSystemResource("/" + fileName);
-
-            // Alterar nome do arquivo a ser salvo
-
-            FlatFileItemReader<Line> flatFileItemReaderLine = new FlatFileItemReaderBuilder<Line>()
-                    .name("/" + fileName)
-                    .resource(resource)
-                    .lineMapper(fileLineMappers("/" + fileName))
-                    .build();
-
-            this.taskletStep = stepBuilderFactory
-                    .get("importDataSale")
-                    .<Line, Line>chunk(20)
-                    .reader(flatFileItemReaderLine)
-                    .writer(classifierCompositeItemWriter)
-                    .listener(this.salesReportGenerator)
-                    .build();
-        }
+        initializeTaskletStep(stepExecution);
 
         this.taskletStep.execute(stepExecution);
         this.removeFile(stepExecution);
@@ -87,15 +70,44 @@ public class ImportDataSaleFromFile implements Step {
         stepExecution.setExitStatus(ExitStatus.COMPLETED);
     }
 
+    private void initializeTaskletStep(StepExecution stepExecution) {
+
+        if (this.taskletStep == null) {
+
+            String fileName = ContextProvider.getFileNameInStepContext(stepExecution.getExecutionContext());
+            Resource resource = ResourceProvider.getFileInPath(this.folderInPath, fileName);
+
+            this.taskletStep = this
+                    .stepBuilderFactory
+                    .get("importDataSale")
+                    .<Line, Line>chunk(20)
+                    .reader(createFlatFileItemReader(fileName, resource))
+                    .writer(this.classifierCompositeItemWriter)
+                    .build();
+        }
+    }
+
+    private static FlatFileItemReader<Line> createFlatFileItemReader(String baseFileName, Resource resource) {
+
+        String fileName = baseFileName + LocalDateTime.now();
+
+        return new FlatFileItemReaderBuilder<Line>()
+                .name(fileName)
+                .resource(resource)
+                .lineMapper(createFileLineMappers(fileName))
+                .build();
+    }
 
     private void removeFile(StepExecution stepExecution) {
 
         try {
 
-            String fileName = (String) stepExecution.getExecutionContext().get("fileName");
-            Resource resource = new FileSystemResource("/" + fileName.substring(6));
-            File file = resource.getFile();
+            Resource resource = ResourceProvider.getFileInPath(
+                    this.folderInPath,
+                    ContextProvider.getFileNameInStepContext(stepExecution.getExecutionContext())
+            );
 
+            File file = resource.getFile();
             boolean deleted = file.delete();
 
             if (!deleted) {
@@ -103,11 +115,11 @@ public class ImportDataSaleFromFile implements Step {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new RuntimeException(ex);
         }
     }
 
-    private static PatternMatchingCompositeLineMapper<Line> fileLineMappers(String fileName) {
+    private static PatternMatchingCompositeLineMapper<Line> createFileLineMappers(String fileName) {
 
         PatternMatchingCompositeLineMapper<Line> lineMapper = new PatternMatchingCompositeLineMapper<>();
 
