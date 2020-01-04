@@ -37,7 +37,7 @@ public class SalesmanRepositoryImpl implements SalesmanRepository {
     @Override
     public Long quantitySalesmaneForFile(String fileId) {
 
-        Query query = this.entityManager.createQuery("SELECT COUNT(SM) FROM SALESMAN AS SM WHERE fileId = :fileId");
+        Query query = this.entityManager.createQuery("SELECT COUNT(SM) FROM SALESMAN AS SM WHERE SM.fileId = :fileId");
         query.setParameter("fileId", fileId);
 
         return (Long) query.getSingleResult();

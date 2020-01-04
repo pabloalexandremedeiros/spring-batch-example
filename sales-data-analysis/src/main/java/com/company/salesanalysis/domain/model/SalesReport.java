@@ -22,8 +22,6 @@ public class SalesReport {
             Salesman worstSalesman ){
 
         Validate.isTrue(StringUtils.isNotBlank(fileName));
-        Validate.isTrue(numberOfFileClients > 0);
-        Validate.isTrue(numberOfFileSalesman >  0);
         Validate.notEmpty(mostExpensiveSalesIds);
         Validate.notNull(worstSalesman);
 

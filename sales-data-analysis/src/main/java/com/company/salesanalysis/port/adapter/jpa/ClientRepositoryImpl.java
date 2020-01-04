@@ -34,7 +34,7 @@ public class ClientRepositoryImpl implements ClientRepository {
     @Override
     public Long quantityClientsForFile(String fileId) {
 
-        Query query = this.entityManager.createQuery("SELECT COUNT(C) FROM CLIENT AS C WHERE fileId= :fileId");
+        Query query = this.entityManager.createQuery("SELECT COUNT(C) FROM CLIENT AS C WHERE C.fileId = :fileId");
         query.setParameter("fileId", fileId);
 
         return (Long) query.getSingleResult();
