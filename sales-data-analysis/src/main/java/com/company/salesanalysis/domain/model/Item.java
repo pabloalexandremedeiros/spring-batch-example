@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity(name = "ITEM")
-public class    Item implements Serializable {
+public class Item implements Serializable {
 
     @Id
     @GeneratedValue

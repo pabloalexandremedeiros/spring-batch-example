@@ -1,6 +1,5 @@
 package com.company.salesanalysis.batch.step.generatesalesreport;
 
-import com.company.salesanalysis.batch.step.generatesalesreport.writer.salesreport.CreateSalesReportTasklet;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobInterruptedException;
 import org.springframework.batch.core.Step;
@@ -26,7 +25,7 @@ public class GenerateSalesReportStep implements Step {
 
     @Override
     public String getName() {
-        return "salesReportStep";
+        return "generateSalesReportStep";
     }
 
     @Override
@@ -48,7 +47,10 @@ public class GenerateSalesReportStep implements Step {
                     .stepBuilderFactory
                     .get("generateSalesReport")
                     .tasklet(createSalesReportTasklet)
-                    .exceptionHandler((context, throwable) -> {throwable.printStackTrace();})
+                    .exceptionHandler((context, throwable) -> {
+                        context.close();
+                        throw new RuntimeException(throwable);
+                    })
                     .build();
         }
 

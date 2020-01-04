@@ -1,14 +1,12 @@
 package com.company.salesanalysis.batch;
 
-import com.company.salesanalysis.batch.step.importdatasale.ImportDataSalesStepFactory;
 import com.company.salesanalysis.batch.step.generatesalesreport.GenerateSalesReportStep;
+import com.company.salesanalysis.batch.step.importdatasale.ImportDataSalesStepFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
-import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
-import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 

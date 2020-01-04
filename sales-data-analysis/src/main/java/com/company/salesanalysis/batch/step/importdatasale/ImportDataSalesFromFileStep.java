@@ -8,7 +8,7 @@ import com.company.salesanalysis.batch.step.importdatasale.reader.sale.SaleToken
 import com.company.salesanalysis.batch.step.importdatasale.reader.salesman.SalesmanFieldSetMapper;
 import com.company.salesanalysis.batch.step.importdatasale.reader.salesman.SalesmanTokenizer;
 import com.company.salesanalysis.domain.model.Line;
-import com.company.salesanalysis.port.adapter.systemfile.ResourceProvider;
+import com.company.salesanalysis.port.adapter.filesystem.ResourceProvider;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.step.tasklet.TaskletStep;
@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,8 +73,11 @@ public class ImportDataSalesFromFileStep implements Step {
 
         if (this.taskletStep == null) {
 
-            String fileName = ContextProvider.getFileNameInStepContext(stepExecution.getExecutionContext());
-            Resource resource = ResourceProvider.getFileInPath(this.folderInPath, fileName);
+            String fileName = ContextProvider
+                    .getFileNameInStepContext(stepExecution.getExecutionContext());
+
+            Resource resource = ResourceProvider
+                    .getFileInPath(this.folderInPath, fileName);
 
             this.taskletStep = this
                     .stepBuilderFactory
@@ -83,6 +85,10 @@ public class ImportDataSalesFromFileStep implements Step {
                     .<Line, Line>chunk(20)
                     .reader(createFlatFileItemReader(fileName, resource))
                     .writer(this.classifierCompositeItemWriter)
+                    .exceptionHandler((context, throwable) -> {
+                        context.close();
+                        throw new RuntimeException(throwable);
+                    })
                     .build();
         }
     }

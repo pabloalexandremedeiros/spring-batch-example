@@ -2,7 +2,6 @@ package com.company.salesanalysis.batch.step.importdatasale;
 
 import com.company.salesanalysis.domain.model.Line;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
 import org.springframework.batch.core.partition.support.Partitioner;
@@ -14,10 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
-import static com.company.salesanalysis.port.adapter.systemfile.ResourceProvider.getFilesInPath;
+import static com.company.salesanalysis.port.adapter.filesystem.ResourceProvider.getFilesInPath;
 
 @Component
-@EnableBatchProcessing
 public class ImportDataSalesStepFactory {
 
 
@@ -53,10 +51,10 @@ public class ImportDataSalesStepFactory {
 
         return this
                 .stepBuilderFactory
-                .get("multiImportDataSale")
-                .partitioner("import", partitioner)
+                .get("importDataSalesMaster")
+                .partitioner("importData", partitioner)
                 .step(new ImportDataSalesFromFileStep(this.filesPathIn, this.stepBuilderFactory, this.classifierCompositeItemWriter))
-                .aggregator((result, executions) -> new ImportDataSalesStepAggregator().aggregate(result, executions))
+                .aggregator(new ImportDataSalesStepAggregator())
                 .taskExecutor(this.threadPoolTaskExecutor)
                 .build();
     }
