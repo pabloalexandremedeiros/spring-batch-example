@@ -11,11 +11,11 @@ public class SalesReportFieldExtractor implements FieldExtractor<SalesReport> {
 
         Object[] objectReturn = new Object[5];
 
-        objectReturn[0] = item.getFileName();
-        objectReturn[1] = item.getNumberOfFileClients();
-        objectReturn[2] = item.getNumberOfFileSalesman();
-        objectReturn[3] = item.getMostExpensiveSalesIds();
-        objectReturn[4] = item.getWorstSalesman().getName();
+        objectReturn[0] = "fileName: " + item.getFileName();
+        objectReturn[1] = "numberOfFileClients: " + item.getNumberOfFileClients();
+        objectReturn[2] = "numberOfFileSalesman: " + item.getNumberOfFileSalesman();
+        objectReturn[3] = "mostExpensiveSalesIds: " + item.getMostExpensiveSalesIds();
+        objectReturn[4] = "worstSalesmanName: " + item.getWorstSalesman().getName();
 
         return objectReturn;
     }

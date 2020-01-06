@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Component
@@ -24,6 +25,7 @@ public class CreateSalesReportTasklet implements Tasklet {
     private String basePathOutFiles;
     private SalesAnalysisService salesAnalysisService;
 
+    private static final String BAR = "-";
     private static final String MSG_ERROR_WRITE_IN_FILE = "error writing to sales report in file ";
 
     CreateSalesReportTasklet(
@@ -61,7 +63,7 @@ public class CreateSalesReportTasklet implements Tasklet {
                                     ExecutionContext stepExecution) {
 
         Resource fileForWrite = ResourceProvider
-                .createFileInPath(filePathOut, salesReport.getFileName());
+                .createFileInPath(filePathOut, salesReport.getFileName() + BAR + LocalDateTime.now());
 
         FlatFileItemWriter<SalesReport> salesReportFlatFileItemWriter = createFlatFileItemWriter(fileForWrite);
         salesReportFlatFileItemWriter.open(stepExecution);
@@ -85,7 +87,7 @@ public class CreateSalesReportTasklet implements Tasklet {
                 .name("lineWriterOutFile")
                 .resource(resource)
                 .delimited()
-                .delimiter(";")
+                .delimiter("; ")
                 .fieldExtractor(new SalesReportFieldExtractor())
                 .build();
     }
